@@ -6,4 +6,9 @@
     <string name="disconnected">Disconnected</string>
     <string name="service">Service</string>
     <string name="characteristic">Characteristic</string>
+    <string name="unlock">Unlock</string>
+    <string name="open_alarm">Open Alarm</string>
+    <string name="interval">扫码间隔（秒）</string>
+    <string name="rssi">rssi</string>
+    <string name="autoUnlock">自动选择信号最强的锁</string>
 </resources>

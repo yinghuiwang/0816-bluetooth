@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -242,6 +243,49 @@ public class BluetoothLeService extends Service {
     }
 
     /**
+     * 向指定character中写入数据
+     *
+     * @param values 写入数据的字节数组列表(某些设备一个功能要写入多个命令)
+     */
+    public void characterWrite(final UUID serviceUUID, final UUID characterUUID,
+        final List<byte[]> values) {
+        if (mBluetoothGatt != null) {
+            new CountDownTimer((values.size() + 1) * 200,
+                300) {
+                int index = 0;
+
+                @Override public void onTick(long millisUntilFinished) {
+                    if (index < values.size()) {
+                        characterWrite(serviceUUID, characterUUID, values.get(index));
+                        index++;
+                    }
+                }
+
+                @Override public void onFinish() {
+
+                }
+            }.start();
+        }
+    }
+
+    public void characterWrite(UUID serviceUUID, UUID characterUUID, byte[] value) {
+        if (mBluetoothGatt != null) {
+            try {
+                BluetoothGattService service = mBluetoothGatt.getService(serviceUUID);
+                if (service != null) {
+                    BluetoothGattCharacteristic characteristic = service.getCharacteristic(characterUUID);
+                    characteristic.setValue(value);
+                    mBluetoothGatt.writeCharacteristic(characteristic);
+                } else {
+                    Log.w(TAG, "没有此服务");
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "写特征值报错");
+            }
+        }
+    }
+
+    /**
      * Request a read on a given {@code BluetoothGattCharacteristic}. The read
      * result is reported asynchronously through the
      * {@code BluetoothGattCallback#onCharacteristicRead(android.bluetooth.BluetoothGatt, android.bluetooth.BluetoothGattCharacteristic, int)}
@@ -281,6 +325,7 @@ public class BluetoothLeService extends Service {
             mBluetoothGatt.writeDescriptor(descriptor);
         }
     }
+
 
     /**
      * Retrieves a list of supported GATT services on the connected device. This

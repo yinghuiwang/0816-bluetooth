@@ -11,7 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.wangyinghui.bluetooth.R;
@@ -26,6 +29,11 @@ public class DeviceScanActivity extends AppCompatActivity implements DeviceScanC
     private RecyclerView mRecyclerView;
     private Button mRefeshBtn;
     private ProgressBar mProgressBar;
+    private EditText mTimeIntervalEt;
+    private EditText mRSSIEt;
+    private Switch mAutoSelectSwitch;
+
+    private Boolean mIsAutoScan = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +49,28 @@ public class DeviceScanActivity extends AppCompatActivity implements DeviceScanC
         mRefeshBtn = findViewById(R.id.refresh_btn);
         mRefeshBtn.setOnClickListener(this);
         mProgressBar = findViewById(R.id.progressBar2);
+        mTimeIntervalEt = findViewById(R.id.time_interval_et);
+        mRSSIEt = findViewById(R.id.rssi_et);
+        mAutoSelectSwitch = findViewById(R.id.auto_select_switch);
+
+        mAutoSelectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mIsAutoScan = isChecked;
+                if (!mIsAutoScan) {
+                    mPresenter.stopAutoScan();
+                }
+            }
+        });
 
         // 出事化presenter
         new  DeviceScanPresenter(this);
         mPresenter.start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -94,5 +120,20 @@ public class DeviceScanActivity extends AppCompatActivity implements DeviceScanC
     @Override
     public void onItemClick(int position) {
         mPresenter.jumpPage(position);
+    }
+
+    @Override
+    public String getRssi() {
+        return mRSSIEt.getText().toString();
+    }
+
+    @Override
+    public String getTimeInterval() {
+        return mTimeIntervalEt.getText().toString();
+    }
+
+    @Override
+    public Boolean getIsAutoScan() {
+        return mIsAutoScan;
     }
 }

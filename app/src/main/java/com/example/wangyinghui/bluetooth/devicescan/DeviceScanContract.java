@@ -18,6 +18,9 @@ public interface DeviceScanContract {
 
         void showRefreshBtn(boolean show);
         void showProgressBar(boolean show);
+        String getRssi();
+        String getTimeInterval();
+        Boolean getIsAutoScan();
     }
 
     interface iDeviceScanPresenter {
@@ -26,6 +29,7 @@ public interface DeviceScanContract {
 
         void startScan();
         void stopScan();
+        void stopAutoScan();
 
         void jumpPage(int position);
     }

@@ -29,10 +29,10 @@ public class DeviceControlActivity extends AppCompatActivity implements DeviceCo
     private TextView mDeviceNameTv;
     private TextView mAddressTv;
     private TextView mStatusTv;
-    private TextView mContentTv;
     private Button mConnectBtn;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
+    private boolean mOpenAlarm = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,6 @@ public class DeviceControlActivity extends AppCompatActivity implements DeviceCo
         mDeviceNameTv = findViewById(R.id.name_tv);
         mAddressTv = findViewById(R.id.address_tv);
         mStatusTv = findViewById(R.id.connect_status_tv);
-        mContentTv = findViewById(R.id.content_tv);
         mConnectBtn = findViewById(R.id.connect_btn);
         mProgressBar = findViewById(R.id.progressBar2);
         mDeviceNameTv.setText("设备名称：" + mDeviceName);
@@ -105,11 +104,16 @@ public class DeviceControlActivity extends AppCompatActivity implements DeviceCo
 
     @Override
     public void onClick(View v) {
-        if (!mPresenter.isConnected()) {
-            mPresenter.connect(mDeviceAddress);
-        } else {
-            mPresenter.disconnect();
+        switch (v.getId()) {
+            case R.id.connect_btn:
+                if (!mPresenter.isConnected()) {
+                    mPresenter.connect(mDeviceAddress);
+                } else {
+                    mPresenter.disconnect();
+                }
+                break;
         }
+
     }
 
     @Override

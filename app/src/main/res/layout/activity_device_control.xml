@@ -40,22 +40,20 @@
         android:layout_marginBottom="60dp"
         />
 
-
     <RelativeLayout
         android:id="@+id/bottom_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         >
         <Button
             android:id="@+id/connect_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:text="@string/connected"
             />
-
         <ProgressBar
             android:id="@+id/progressBar2"
             android:layout_width="wrap_content"

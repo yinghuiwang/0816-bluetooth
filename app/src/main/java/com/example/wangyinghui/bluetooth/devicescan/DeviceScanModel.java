@@ -3,7 +3,6 @@ package com.example.wangyinghui.bluetooth.devicescan;
 import com.example.wangyinghui.bluetooth.bean.DeviceBean;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -58,4 +57,5 @@ public class DeviceScanModel {
     public DeviceBean[] getDeviceBeans() {
         return mDeviceBeans;
     }
+
 }

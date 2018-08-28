@@ -34,6 +34,9 @@ public class DeviceScanPresenter implements DeviceScanContract.iDeviceScanPresen
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 1000;
 
+    private Handler mAutoScanHandler;
+    private boolean mStopAutoScan;
+
     public DeviceScanPresenter(DeviceScanContract.iDeviceScanView view) {
         mDeviceScanView = view;
         mDeviceScanView.setPresenter(this);
@@ -64,12 +67,50 @@ public class DeviceScanPresenter implements DeviceScanContract.iDeviceScanPresen
             mDeviceScanView.getActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
-        scanLeDevice(true);
+        if (mDeviceScanView.getIsAutoScan()) {
+            mStopAutoScan = false;
+            mAutoScanHandler= new Handler();
+            scanLeDevice(true);
+            String timeIntervalStr = mDeviceScanView.getTimeInterval();
+            final int timeInterval = Math.abs(Integer.valueOf(timeIntervalStr).intValue()) * 1000;
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    //do something
+                    //每隔1s循环执行run方法
+                    if (!mStopAutoScan) {
+                        mAutoScanHandler.postDelayed(this, timeInterval);
+                        scanLeDevice(true);
+                    }
+                }
+            };
+            mHandler.postDelayed(r, timeInterval);
+        } else {
+            scanLeDevice(true);
+        }
+
     }
 
     @Override
     public void stopScan() {
         scanLeDevice(false);
+    }
+
+    public void checkThreshold() {
+        int rssi = 0 - Math.abs(Integer.valueOf(mDeviceScanView.getRssi()));
+        DeviceBean[] deviceBeans = mDeviceScanModel.getDeviceBeans();
+        if (deviceBeans != null && deviceBeans.length > 0) {
+            DeviceBean deviceBean = deviceBeans[0];
+            if (deviceBean.getRssi() > rssi) {
+                stopAutoScan();
+                jumpPage(0);
+            }
+        }
+    }
+
+    @Override
+    public void stopAutoScan() {
+        mStopAutoScan = true;
     }
 
     @Override
@@ -118,6 +159,7 @@ public class DeviceScanPresenter implements DeviceScanContract.iDeviceScanPresen
                     mScanning = false;
                     changeScanState();
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    checkThreshold();
                     mDeviceScanView.notifyDataSetChanged(mDeviceScanModel.getDevices());
                 }
             }, SCAN_PERIOD);

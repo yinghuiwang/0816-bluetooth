@@ -1,7 +1,6 @@
 package com.example.wangyinghui.bluetooth.devicecontrol;
 
 import com.example.wangyinghui.bluetooth.bean.CharacteristicBean;
-import com.example.wangyinghui.bluetooth.bean.DeviceBean;
 import java.util.ArrayList;
 
 /**
